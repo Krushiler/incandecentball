@@ -11,28 +11,51 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Canvas guiCanvas;
     [SerializeField] Canvas endScreenCanvas;
     [SerializeField] Canvas levelPickCanvas;
+    [SerializeField] Canvas levelFinishCanvas;
     
     [SerializeField] Button restartButton;
     [SerializeField] Button closeLevelsButton;
+    [SerializeField] Button nextLevelButton;
     [SerializeField] Animator endScreenAnimator;
     [SerializeField] Animator levelScreenAnimator;
+    [SerializeField] Animator finishLevelAnimator;
     [SerializeField] Canvas fadeCanvas;
     [SerializeField] Animator fadeAnimator;
     [SerializeField] CharacterController2D cat;
     [SerializeField] TextMeshProUGUI prompt;
+
+    int levelNumber;
+    bool isFinalLevel;
+    string levelSection;
+
     void Start()
     {
-        guiCanvas.gameObject.SetActive(true);
-        levelPickCanvas.gameObject.SetActive(false);
-        endScreenCanvas.gameObject.SetActive(false);
+        showCanvas(guiCanvas);
         restartButton.onClick.AddListener(restartLevel);
         closeLevelsButton.onClick.AddListener(closeMenu);
+        
+        levelNumber = cat.GetLevelNumber();
+        isFinalLevel = cat.GetLevelIsFinal();
+        levelSection = cat.GetLevelSection();
+
+        nextLevelButton.onClick.AddListener(delegate
+        {
+            if (!isFinalLevel)
+            {
+                loadLevel(levelSection + (levelNumber+1).ToString());
+            }
+            else
+            {
+                loadLevel("Home");
+            }
+        });
     }
 
     public IEnumerator start()
     {
         yield return new WaitForSeconds(1);
     }
+
 
     public void loadLevel(string levelName)
     {
@@ -76,27 +99,37 @@ public class CanvasController : MonoBehaviour
 
     public void levelCanvasActive()
     {
-        guiCanvas.gameObject.SetActive(false);
-        levelPickCanvas.gameObject.SetActive(true);
-        endScreenCanvas.gameObject.SetActive(false);
+        showCanvas(levelPickCanvas);
         cat.SetInteracting(true);
         levelScreenAnimator.SetTrigger("open");
     }
 
     public void guiCanvasActive()
     {
-        guiCanvas.gameObject.SetActive(true);
-        levelPickCanvas.gameObject.SetActive(false);
-        endScreenCanvas.gameObject.SetActive(false);
+        showCanvas(guiCanvas);
         cat.SetInteracting(false);
     }
 
     public void endScreenCanvasActive()
     {
-        levelPickCanvas.gameObject.SetActive(false);
-        guiCanvas.gameObject.SetActive(false);
-        endScreenCanvas.gameObject.SetActive(true);
+        showCanvas(endScreenCanvas);
         endScreenAnimator.SetTrigger("open");
+    }
+
+    public void levelFinishCanvasActive()
+    {
+        showCanvas(levelFinishCanvas);
+        finishLevelAnimator.SetTrigger("open");
+
+    }
+
+    void showCanvas(Canvas can)
+    {
+        guiCanvas.gameObject.SetActive(true);
+        levelPickCanvas.gameObject.SetActive(false);
+        endScreenCanvas.gameObject.SetActive(false);
+        levelFinishCanvas.gameObject.SetActive(false);
+        can.gameObject.SetActive(true);
     }
 
     public void EnablePrompt(string ptext)

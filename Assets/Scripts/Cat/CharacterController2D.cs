@@ -9,6 +9,9 @@ public class CharacterController2D : MonoBehaviour
 {                     // Amount of force added when the player jumps.
 	[Space(10)]
 	[Header("Level Varibables")]
+	[SerializeField] private string levelSection;
+	[SerializeField] private int levelNumber;
+	[SerializeField] private bool isFinalLevel = false;
 	[SerializeField] private int moneyToEnd;
 	[Space(10)]
 	[Header("Cat Characteristics")]
@@ -186,11 +189,22 @@ public class CharacterController2D : MonoBehaviour
 			inInteractZone = true;
 			if (!wasInteractedZone)
 			{
-				if (interactableGameObject.GetComponent<Interactable>().getType()==InteractableType.LevelEnder)
+				if (interactableGameObject.GetComponent<Interactable>().getType() == InteractableType.LevelEnder)
 				{
-					Time.timeScale = 0;
+					if (money < moneyToEnd)
+					{
+						canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+					}
+					else
+					{
+						canvasController.levelFinishCanvasActive();
+						interacting = true;
+					}
 				}
-				canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+				else
+				{
+					canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+				}
 			}
 		}
 		if (wasInteractedZone && !inInteractZone)
@@ -560,6 +574,19 @@ public class CharacterController2D : MonoBehaviour
 	public void SetInteracting(bool _interacting)
 	{
 		interacting = _interacting;
+	}
+
+	public bool GetLevelIsFinal()
+	{
+		return isFinalLevel;
+	}
+	public string GetLevelSection()
+	{
+		return levelSection;
+	}
+	public int GetLevelNumber()
+	{
+		return levelNumber;
 	}
 
 }

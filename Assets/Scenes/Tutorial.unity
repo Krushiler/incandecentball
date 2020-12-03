@@ -586,7 +586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactableType: 1
-  interactableText: End Level
+  interactableText: "\u0421\u043E\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0441\u0435
+    \u043A\u043B\u0443\u0431\u043A\u0438"
 --- !u!61 &690709674
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -952,6 +953,16 @@ PrefabInstance:
       propertyPath: moneyToEnd
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2286355112109317729, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: levelSection
+      value: LevelCat
+      objectReference: {fileID: 0}
+    - target: {fileID: 2286355112109317729, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: levelNumber
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2286355112209395694, guid: f63aa25a483f06a4e9db53fe52ca3127,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1012,7 +1023,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: PLAYER_CAT
       objectReference: {fileID: 0}
+    - target: {fileID: 7124640804324922939, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7483323917366208602, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8719881287376045070, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719881288514570178, guid: f63aa25a483f06a4e9db53fe52ca3127,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
@@ -1789,12 +1815,12 @@ CompositeCollider2D:
   - m_Collider: {fileID: 1488424849}
     m_ColliderPaths:
     - - X: 970000000
-        Y: 80000000
-      - X: 910000000
-        Y: 80000000
-      - X: 910000000
         Y: -10000000
       - X: 970000000
+        Y: 80000000
+      - X: 910000000
+        Y: 80000000
+      - X: 910000000
         Y: -10000000
   m_CompositePaths:
     m_Paths:
@@ -1879,7 +1905,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -2949,7 +2975,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -3069,7 +3095,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -3525,120 +3551,80 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 6698871497340754537}
     m_ColliderPaths:
-    - - X: 750000100
-        Y: 9999959
-      - X: 750000100
-        Y: 100000041
-      - X: 750000041
-        Y: 100000100
-      - X: 739999959
-        Y: 100000100
-      - X: 739999900
-        Y: 100000041
-      - X: 739999900
-        Y: 20120462
-      - X: 739999915
-        Y: 20120425
-      - X: 740120206
-        Y: 20000100
-      - X: 739999959
-        Y: 20000100
-      - X: 739999900
-        Y: 20000041
-      - X: 739999900
-        Y: 9999959
-      - X: 739999959
-        Y: 9999900
-      - X: 750000041
-        Y: 9999900
-    - - X: 530000100
-        Y: 9999959
-      - X: 530000100
-        Y: 70000041
-      - X: 530000041
-        Y: 70000100
-      - X: 519999959
-        Y: 70000100
-      - X: 519999900
-        Y: 70000041
-      - X: 519999900
-        Y: 20120462
-      - X: 519999915
-        Y: 20120425
-      - X: 520120238
-        Y: 20000100
-      - X: 519999959
-        Y: 20000100
-      - X: 519999900
-        Y: 20000041
-      - X: 519999900
-        Y: 9999959
-      - X: 519999959
-        Y: 9999900
-      - X: 530000041
-        Y: 9999900
-    - - X: 790000100
-        Y: -10000041
-      - X: 790000100
-        Y: 70000041
-      - X: 790000041
-        Y: 70000100
-      - X: 779999959
-        Y: 70000100
-      - X: 779999900
-        Y: 70000041
-      - X: 779999900
-        Y: 60120464
-      - X: 779999915
-        Y: 60120427
-      - X: 780120206
-        Y: 60000100
-      - X: 779999959
-        Y: 60000100
-      - X: 779999900
-        Y: 60000041
-      - X: 779999900
-        Y: 120462
-      - X: 779999915
-        Y: 120425
-      - X: 780120206
-        Y: 100
-      - X: 779999959
-        Y: 100
-      - X: 779999900
-        Y: 41
-      - X: 779999900
-        Y: -10000041
-      - X: 779999959
-        Y: -10000100
-      - X: 790000041
-        Y: -10000100
+    - - X: 750000000
+        Y: 100000000
+      - X: 740000000
+        Y: 100000000
+      - X: 740000000
+        Y: 20120482
+      - X: 740120448
+        Y: 20000000
+      - X: 740000000
+        Y: 20000000
+      - X: 740000000
+        Y: 10000000
+      - X: 750000000
+        Y: 10000000
+    - - X: 530000000
+        Y: 70000000
+      - X: 520000000
+        Y: 70000000
+      - X: 520000000
+        Y: 20120482
+      - X: 520120480
+        Y: 20000000
+      - X: 520000000
+        Y: 20000000
+      - X: 520000000
+        Y: 10000000
+      - X: 530000000
+        Y: 10000000
+    - - X: 790000000
+        Y: 70000000
+      - X: 780000000
+        Y: 70000000
+      - X: 780000000
+        Y: 60120484
+      - X: 780120448
+        Y: 60000000
+      - X: 780000000
+        Y: 60000000
+      - X: 780000000
+        Y: 120482
+      - X: 780120448
+        Y: 0
+      - X: 780000000
+        Y: 0
+      - X: 780000000
+        Y: -10000000
+      - X: 790000000
+        Y: -10000000
   m_CompositePaths:
     m_Paths:
-    - - {x: 74.99998, y: 0.99999}
-      - {x: 74.99998, y: 10.00001}
-      - {x: 73.999985, y: 9.999974}
-      - {x: 74, y: 2.012035}
-      - {x: 74.01194, y: 2.00001}
-      - {x: 73.999985, y: 1.9999748}
-      - {x: 74.00002, y: 0.99999}
-    - - {x: 52.999973, y: 0.99999}
-      - {x: 52.999973, y: 7.0000095}
-      - {x: 51.999992, y: 6.9999743}
-      - {x: 52, y: 2.012035}
-      - {x: 52.011936, y: 2.00001}
-      - {x: 51.999992, y: 1.9999748}
-      - {x: 52.000027, y: 0.99999}
-    - - {x: 78.99998, y: -1.00001}
-      - {x: 78.99998, y: 7.0000095}
-      - {x: 77.999985, y: 6.9999743}
-      - {x: 78, y: 6.0120354}
-      - {x: 78.01194, y: 6.00001}
-      - {x: 77.999985, y: 5.9999747}
-      - {x: 78, y: 0.0120349005}
-      - {x: 78.01194, y: 0.0000099}
-      - {x: 77.999985, y: -0.0000252}
-      - {x: 78.00002, y: -1.00001}
+    - - {x: 74.99997, y: 1}
+      - {x: 74.99997, y: 10}
+      - {x: 74, y: 9.99997}
+      - {x: 74.00001, y: 2.0120406}
+      - {x: 74.011955, y: 2}
+      - {x: 74, y: 1.9999708}
+      - {x: 74.00003, y: 1}
+    - - {x: 78.99997, y: -1}
+      - {x: 78.99997, y: 7}
+      - {x: 78, y: 6.9999704}
+      - {x: 78.00001, y: 6.012041}
+      - {x: 78.011955, y: 6}
+      - {x: 78, y: 5.999971}
+      - {x: 78.00001, y: 0.0120406}
+      - {x: 78.011955, y: 0}
+      - {x: 78, y: -0.000029300001}
+      - {x: 78.00003, y: -1}
+    - - {x: 52.999973, y: 1}
+      - {x: 52.999973, y: 7}
+      - {x: 52, y: 6.9999704}
+      - {x: 52.000008, y: 2.0120406}
+      - {x: 52.011963, y: 2}
+      - {x: 52, y: 1.9999708}
+      - {x: 52.00003, y: 1}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &8425364091928431221
@@ -3816,7 +3802,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
