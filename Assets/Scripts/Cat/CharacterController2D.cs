@@ -39,6 +39,8 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private Collider2D m_CrouchDisableCollider;                // A collider that will be disabled when crouching
 	[SerializeField] float CoyoteTime;
 
+	float levelTimer = 0f;
+	bool countTime = true;
 
 	private UIManager uiManager;
 	private float m_JumpForce = 400f;
@@ -74,6 +76,8 @@ public class CharacterController2D : MonoBehaviour
 	private bool m_wasCrouching = false;
 	private float gravityScale;
 
+	string key_time, key_money;
+
 	LayerMask m_WhatIsGround;
 
 	private void Awake()
@@ -93,6 +97,8 @@ public class CharacterController2D : MonoBehaviour
 	Vector3 rbPos, oldRbPos, clipPos, oldClipPos;
 	private void Start()
 	{
+		key_money = levelSection + levelNumber.ToString() + "Money";
+		key_time = levelSection + levelNumber.ToString() + "Time";
 		rbPos = m_Rigidbody2D.position;
 		oldRbPos = m_Rigidbody2D.position;
 		clipPos = m_ClipCheck.position;
@@ -113,6 +119,57 @@ public class CharacterController2D : MonoBehaviour
 	bool interacting = false;
 
 	Vector2 colPos = Vector2.zero;
+
+	private void Update()
+	{
+		if (countTime)
+		{
+			levelTimer += Time.deltaTime;
+		}
+	}
+
+	public void FinishLevel()
+	{
+		countTime = false;
+		canvasController.levelFinishCanvasActive();
+		interacting = true;
+		if (levelNumber != 0)
+		{
+			if (!PlayerPrefs.HasKey(key_time))
+			{
+				PlayerPrefs.SetFloat(key_time, levelTimer);
+				canvasController.setTime(levelTimer, levelTimer);
+			}
+			else
+			{
+				if (levelTimer < PlayerPrefs.GetFloat(key_time))
+				{
+					PlayerPrefs.SetFloat(key_time, levelTimer);
+					canvasController.setTime(levelTimer, levelTimer);
+				}
+				else
+				{
+					canvasController.setTime(levelTimer, PlayerPrefs.GetFloat(key_time));
+				}
+			}
+		}
+		else
+		{
+			PlayerPrefs.SetInt("tutorial", 1);
+		}
+		if (!PlayerPrefs.HasKey("completedLevels"))
+		{
+			PlayerPrefs.SetInt("completedLevels", 1);
+		}
+		else
+		{
+			if (PlayerPrefs.GetInt("completedLevels") < levelNumber)
+			{
+				PlayerPrefs.SetInt("completedLevels", levelNumber);
+			}
+		}
+		
+	}
 
 	public void UpdateMoney()
 	{
@@ -197,8 +254,7 @@ public class CharacterController2D : MonoBehaviour
 					}
 					else
 					{
-						canvasController.levelFinishCanvasActive();
-						interacting = true;
+						FinishLevel();
 					}
 				}
 				else
@@ -390,7 +446,7 @@ public class CharacterController2D : MonoBehaviour
 					onWall = false;
 					jumped = true;
 					m_Rigidbody2D.velocity = new Vector2(wallJumpX * 10f, 0);
-					m_Rigidbody2D.AddForce(new Vector2(0, 550 * jumpHolding));
+					m_Rigidbody2D.AddForce(new Vector2(0, 1.2f * 550 * jumpHolding));
 					antiBugJumpTimer = 0;
 					countAntiBugJumpTime = true;
 					if (move == 0)
@@ -486,7 +542,7 @@ public class CharacterController2D : MonoBehaviour
 				// If the player should jump...
 				if (((m_Grounded || coyoteTimer < CoyoteTime) && jump && !jumped) || ((jumpCounter < jumpsPerJump) && jump))
 				{
-					if (!Physics2D.OverlapArea(m_CeilingCheckLT.position, m_CeilingCheckRB.position, m_WhatIsGround))
+					if (!Physics2D.OverlapCircle(m_CeilingCheck.transform.position, 0.5f, m_WhatIsGroundDef))
 					{
 						if (m_CrouchDisableCollider != null)
 							m_CrouchDisableCollider.enabled = true;
@@ -533,7 +589,7 @@ public class CharacterController2D : MonoBehaviour
 		if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Trap"))
 		{
 			canvasController.endScreenCanvasActive();
-			Time.timeScale = 0;
+			interacting = true;
 		}
 	}
 

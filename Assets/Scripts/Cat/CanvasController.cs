@@ -14,8 +14,11 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Canvas levelFinishCanvas;
     
     [SerializeField] Button restartButton;
+    [SerializeField] Button restartButton1;
     [SerializeField] Button closeLevelsButton;
     [SerializeField] Button nextLevelButton;
+    [SerializeField] Button homeButton;
+    [SerializeField] Button homeButton1;
     [SerializeField] Animator endScreenAnimator;
     [SerializeField] Animator levelScreenAnimator;
     [SerializeField] Animator finishLevelAnimator;
@@ -23,6 +26,9 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Animator fadeAnimator;
     [SerializeField] CharacterController2D cat;
     [SerializeField] TextMeshProUGUI prompt;
+    [SerializeField] Text timeText;
+    [SerializeField] Text timeRecordText;
+    
 
     int levelNumber;
     bool isFinalLevel;
@@ -31,7 +37,7 @@ public class CanvasController : MonoBehaviour
     void Start()
     {
         showCanvas(guiCanvas);
-        restartButton.onClick.AddListener(restartLevel);
+        
         closeLevelsButton.onClick.AddListener(closeMenu);
         
         levelNumber = cat.GetLevelNumber();
@@ -49,6 +55,16 @@ public class CanvasController : MonoBehaviour
                 loadLevel("Home");
             }
         });
+        homeButton.onClick.AddListener(delegate
+        {
+            loadLevel("Home");
+        });
+        homeButton1.onClick.AddListener(delegate
+        {
+            loadLevel("Home");
+        });
+        restartButton.onClick.AddListener(delegate { restartLevel(); });
+        restartButton1.onClick.AddListener(delegate { restartLevel(); });
     }
 
     public IEnumerator start()
@@ -56,6 +72,11 @@ public class CanvasController : MonoBehaviour
         yield return new WaitForSeconds(1);
     }
 
+    public void setTime(float _time, float _timeRecord)
+    {
+        timeText.text = "Время: " + _time.ToString("0.00") + " сек";
+        timeRecordText.text = "Рекорд: " + _timeRecord.ToString("0.00") + " сек";
+    }
 
     public void loadLevel(string levelName)
     {
@@ -81,8 +102,9 @@ public class CanvasController : MonoBehaviour
     public IEnumerator restartLevelWaiter()
     {
         fadeAnimator.SetTrigger("FadeIN");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        
         yield return new WaitForSeconds(1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -125,7 +147,7 @@ public class CanvasController : MonoBehaviour
 
     void showCanvas(Canvas can)
     {
-        guiCanvas.gameObject.SetActive(true);
+        guiCanvas.gameObject.SetActive(false);
         levelPickCanvas.gameObject.SetActive(false);
         endScreenCanvas.gameObject.SetActive(false);
         levelFinishCanvas.gameObject.SetActive(false);

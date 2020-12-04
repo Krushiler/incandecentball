@@ -18,9 +18,15 @@ public class LevelSelector : MonoBehaviour
     private int amountPerPage;
     private int currentLevelCount;
 
+    int completedLevels = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (PlayerPrefs.HasKey("completedLevels"))
+        {
+            completedLevels = PlayerPrefs.GetInt("completedLevels");
+        }
         panelDimensions = levelHolder.GetComponent<RectTransform>().rect;
         iconDimensions = levelIcon.GetComponent<RectTransform>().rect;
         int maxInARow = Mathf.FloorToInt((panelDimensions.width + iconSpacing.x) / (iconDimensions.width + iconSpacing.x));
@@ -72,9 +78,13 @@ public class LevelSelector : MonoBehaviour
             icon.name = "Level " + x;
             icon.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(x.ToString());
             btns.Add(icon.GetComponent<Button>());
-            btns[x-1].onClick.AddListener(delegate {
-                canvasController.loadLevel("LevelCat" + x.ToString()); 
-            }); 
+            if (completedLevels + 1 >= x)
+            {
+                btns[x - 1].onClick.AddListener(delegate
+                {
+                    canvasController.loadLevel("LevelCat" + x.ToString());
+                });
+            }
             iconNum++;
         }
     }
