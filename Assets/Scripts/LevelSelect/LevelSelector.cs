@@ -9,7 +9,9 @@ public class LevelSelector : MonoBehaviour
 {
     [SerializeField] CanvasController canvasController;
     public GameObject levelHolder;
-    public GameObject levelIcon;
+    public GameObject levelIconGreen;
+    public GameObject levelIconRed;
+    public GameObject levelIconGray;
     public GameObject thisCanvas;
     public int numberOfLevels = 50;
     public Vector2 iconSpacing;
@@ -28,7 +30,7 @@ public class LevelSelector : MonoBehaviour
             completedLevels = PlayerPrefs.GetInt("completedLevels");
         }
         panelDimensions = levelHolder.GetComponent<RectTransform>().rect;
-        iconDimensions = levelIcon.GetComponent<RectTransform>().rect;
+        iconDimensions = levelIconGreen.GetComponent<RectTransform>().rect;
         int maxInARow = Mathf.FloorToInt((panelDimensions.width + iconSpacing.x) / (iconDimensions.width + iconSpacing.x));
         int maxInACol = Mathf.FloorToInt((panelDimensions.height + iconSpacing.y) / (iconDimensions.height + iconSpacing.y));
         amountPerPage = maxInARow * maxInACol; 
@@ -72,7 +74,29 @@ public class LevelSelector : MonoBehaviour
         {
             currentLevelCount++;
             int x = iconNum;
-            GameObject icon = Instantiate(levelIcon) as GameObject;
+            GameObject icon;
+            if (completedLevels + 1 >= x)
+            {
+                if (completedLevels >= x)
+                {
+                    if (PlayerPrefs.GetInt("LevelCat" + x + "AllMoney") > 0)
+                    {
+                        icon = Instantiate(levelIconGreen) as GameObject;
+                    }
+                    else
+                    {
+                        icon = Instantiate(levelIconRed) as GameObject;
+                    }
+                }
+                else
+                {
+                    icon = Instantiate(levelIconRed) as GameObject;
+                }
+            }
+            else
+            {
+                icon = Instantiate(levelIconGray) as GameObject;
+            }
             icon.transform.SetParent(thisCanvas.transform, false);
             icon.transform.SetParent(parentObject.transform);
             icon.name = "Level " + x;

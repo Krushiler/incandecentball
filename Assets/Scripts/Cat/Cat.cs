@@ -6,6 +6,7 @@ public class Cat : MonoBehaviour
 {
     [SerializeField] CharacterController2D playerCat;
     [SerializeField] float speed = 40;
+    [SerializeField] Animator animator;
     [SerializeField] int jumpsPerJump = 1;
     [SerializeField] float jumpForce = 600;
     [SerializeField] float ladderSpeed = 30;
@@ -15,6 +16,7 @@ public class Cat : MonoBehaviour
 
     void Start()
     {
+        playerCat.SetAnimator(animator);
         playerCat.SetJumpForce(jumpForce);
         playerCat.SetSpeed(speed);
         playerCat.SetJumpsPerJump(jumpsPerJump);

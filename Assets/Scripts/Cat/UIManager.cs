@@ -21,9 +21,21 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void UpdateMoney(int _money, int needMoney)
+    public void UpdateMoney(int _money, int needMoney, string levelSection)
     {
-        money.text = _money.ToString() + "/" + needMoney.ToString();
+        if (levelSection != "Home")
+        {
+            money.text = _money.ToString() + "/" + needMoney.ToString();
+        }
+        else
+        {
+            if (!PlayerPrefs.HasKey("Money"))
+            {
+                PlayerPrefs.SetInt("Money", 0);
+            }
+            money.text = PlayerPrefs.GetInt("Money").ToString();
+            
+        }
     }
 
     public Vector2 GetMoneyPos(Camera playerCamera)

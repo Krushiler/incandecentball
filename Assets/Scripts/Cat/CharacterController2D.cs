@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class CharacterController2D : MonoBehaviour
 {                     // Amount of force added when the player jumps.
@@ -63,6 +64,7 @@ public class CharacterController2D : MonoBehaviour
 	private float wallJumpX = 1;
 	private bool onWall = false;
 	private bool inInteractZone = false;
+	private Animator catAnimator;
 
 	[Header("Events")]
 	[Space]
@@ -79,6 +81,8 @@ public class CharacterController2D : MonoBehaviour
 	string key_time, key_money;
 
 	LayerMask m_WhatIsGround;
+
+
 
 	private void Awake()
 	{
@@ -115,16 +119,49 @@ public class CharacterController2D : MonoBehaviour
 	float antiBugJumpTimer = 0f;
 	bool countAntiBugJumpTime = true;
 
+	bool die = false;
+
 	GameObject interactableGameObject = null;
 	bool interacting = false;
 
 	Vector2 colPos = Vector2.zero;
+
+	bool paused = false;
+
+	Vector2 pauseVel = Vector2.zero;
+
+	public void PauseGame()
+	{
+		interacting = false;
+		pauseVel = m_Rigidbody2D.velocity;
+		m_Rigidbody2D.bodyType = RigidbodyType2D.Static;
+		paused = true;
+		canvasController.pauseGame();
+	}
+	public void UnPauseGame()
+	{
+		canvasController.unPauseGame();
+		paused = false;
+		m_Rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
+		m_Rigidbody2D.velocity = pauseVel;
+	}
 
 	private void Update()
 	{
 		if (countTime)
 		{
 			levelTimer += Time.deltaTime;
+		}
+		if (Input.GetButtonDown("Pause"))
+		{
+			if (!paused)
+			{
+				PauseGame();
+			}
+			else
+			{
+				UnPauseGame();
+			}
 		}
 	}
 
@@ -173,191 +210,230 @@ public class CharacterController2D : MonoBehaviour
 
 	public void UpdateMoney()
 	{
-		uiManager.UpdateMoney(money, moneyToEnd);
+		uiManager.UpdateMoney(money, moneyToEnd, levelSection);
 	}
 	float moveHor = 0;
 	private void FixedUpdate()
-	{ 
-		if (antiBugJumpTimer < antiBugJumpTime && countAntiBugJumpTime)
+	{
+		if (!paused && !die)
 		{
-			antiBugJumpTimer += Time.fixedDeltaTime;
-		}
-		bool wasGrounded = m_Grounded;
-		bool wasLaddered = m_Laddered;
-		bool wasWalled = onWall;
-		bool wasInteractedZone = inInteractZone;
-		inInteractZone = false;
-		m_Grounded = false;
-		m_Laddered = false;
-		onWall = false;
-
-		Collider2D[] colliders = Physics2D.OverlapAreaAll(m_GroundCheck.position, m_GroundCheckRB.position, m_WhatIsGround);
-
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject)
+			if (antiBugJumpTimer < antiBugJumpTime && countAntiBugJumpTime)
 			{
-				m_Grounded = true;
-				if (!wasGrounded)
-					OnLandEvent.Invoke();
+				antiBugJumpTimer += Time.fixedDeltaTime;
 			}
-		}
+			bool wasGrounded = m_Grounded;
+			bool wasLaddered = m_Laddered;
+			bool wasWalled = onWall;
+			bool wasInteractedZone = inInteractZone;
+			inInteractZone = false;
+			m_Grounded = false;
+			m_Laddered = false;
+			onWall = false;
 
-		bool isLastLaddered = false;
-		colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, MoneyMask);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject)
+			Collider2D[] colliders = Physics2D.OverlapAreaAll(m_GroundCheck.position, m_GroundCheckRB.position, m_WhatIsGround);
+
+			for (int i = 0; i < colliders.Length; i++)
 			{
-				money += colliders[i].gameObject.GetComponent<Money>().PickUp(gameObject);
-				
-			}
-		}
-		colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, m_WhatIsLadder);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject)
-			{
-				isLastLaddered = true;
-			}
-		}
-
-		if (!isLastLaddered)
-		{
-			escapeFromLadder = false;
-		}
-
-
-		colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, m_WhatIsLadder);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject && !escapeFromLadder)
-			{
-				m_Laddered = true;
-			}
-		}
-
-		interactableGameObject = null;
-
-		Collider2D collider = Physics2D.OverlapArea(m_CeilingCheckLT.position, m_GroundCheckRB.position, m_WhatIsInteractable);
-		if (collider != null && collider.gameObject != gameObject)
-		{
-			interactableGameObject = collider.gameObject;
-			inInteractZone = true;
-			if (!wasInteractedZone)
-			{
-				if (interactableGameObject.GetComponent<Interactable>().getType() == InteractableType.LevelEnder)
+				if (colliders[i].gameObject != gameObject)
 				{
-					if (money < moneyToEnd)
+					m_Grounded = true;
+					if (!wasGrounded)
+						OnLandEvent.Invoke();
+				}
+			}
+
+			bool isLastLaddered = false;
+			colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, MoneyMask);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject)
+				{
+					money += colliders[i].gameObject.GetComponent<Money>().PickUp(gameObject);
+
+				}
+			}
+			colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, m_WhatIsLadder);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject)
+				{
+					isLastLaddered = true;
+				}
+			}
+
+			if (!isLastLaddered)
+			{
+				escapeFromLadder = false;
+			}
+
+
+			colliders = Physics2D.OverlapAreaAll(m_LadderCheckLT.position, m_LadderCheckRB.position, m_WhatIsLadder);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject && !escapeFromLadder)
+				{
+					m_Laddered = true;
+				}
+			}
+
+			interactableGameObject = null;
+
+			Collider2D collider = Physics2D.OverlapArea(m_CeilingCheckLT.position, m_GroundCheckRB.position, m_WhatIsInteractable);
+			if (collider != null && collider.gameObject != gameObject)
+			{
+				interactableGameObject = collider.gameObject;
+				inInteractZone = true;
+				if (!wasInteractedZone)
+				{
+					if (interactableGameObject.GetComponent<Interactable>().getType() == InteractableType.LevelEnder)
 					{
-						canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+						int bestMoney = 0;
+						int playerMoney = 0;
+
+						if (PlayerPrefs.HasKey(levelSection + levelNumber.ToString() + "Money"))
+						{
+							bestMoney = PlayerPrefs.GetInt(levelSection + levelNumber.ToString() + "Money");
+						}
+
+						if (PlayerPrefs.HasKey("Money"))
+						{
+							playerMoney = PlayerPrefs.GetInt("Money");
+						}
+
+						if (bestMoney < money)
+						{
+							if (money >= moneyToEnd)
+							{
+								PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "AllMoney", 1);
+							}
+							PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "Money", money);
+							PlayerPrefs.SetInt("Money", playerMoney + money - bestMoney);
+						}
+						
+						FinishLevel();
 					}
 					else
 					{
-						FinishLevel();
+						canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
 					}
 				}
-				else
+			}
+			if (wasInteractedZone && !inInteractZone)
+			{
+				canvasController.DisablePrompt();
+			}
+			bool isLastWalled = false;
+
+			colliders = Physics2D.OverlapAreaAll(m_WallCheckLU.position, m_WallCheckRB.position, m_WhatIsWallJump);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject)
 				{
-					canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+					isLastWalled = true;
 				}
 			}
-		}
-		if (wasInteractedZone && !inInteractZone)
-		{
-			canvasController.DisablePrompt();
-		}
-		bool isLastWalled = false;
 
-		colliders = Physics2D.OverlapAreaAll(m_WallCheckLU.position, m_WallCheckRB.position, m_WhatIsWallJump);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject)
+			if (!isLastWalled)
 			{
-				isLastWalled = true;
+				escapeFromWall = false;
 			}
-		}
 
-		if (!isLastWalled)
-		{
-			escapeFromWall = false;
-		}
-
-		colliders = Physics2D.OverlapAreaAll(m_WallCheckRU.position, m_WallCheckRB.position, m_WhatIsWallJump);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject && !escapeFromWall)
+			colliders = Physics2D.OverlapAreaAll(m_WallCheckRU.position, m_WallCheckRB.position, m_WhatIsWallJump);
+			for (int i = 0; i < colliders.Length; i++)
 			{
-				onWall = true;
-				if (m_FacingRight)
+				if (colliders[i].gameObject != gameObject && !escapeFromWall)
 				{
-					wallJumpX = -1;
-				}
-				else
-				{
-					wallJumpX = 1;
+					onWall = true;
+					if (m_FacingRight)
+					{
+						wallJumpX = -1;
+					}
+					else
+					{
+						wallJumpX = 1;
+					}
 				}
 			}
-		}
 
 
 
-		if (jumpCounter == 0 && !m_Grounded)
-		{
-			jumpCounter = 1;
-		}
-
-		if (!canLadder)
-		{
-			m_Laddered = false;
-		}
-
-		if (!canJumpFromWalls)
-		{
-			onWall = false;
-		}
-
-		if (m_Grounded)
-		{
-			onWall = false;
-		}
-
-		if (m_Grounded && (!wasGrounded || antiBugJumpTimer >= antiBugJumpTime))
-		{
-			jumped = false;
-			jumpCounter = 0;
-			countAntiBugJumpTime = false;
-		}
-		if (wasGrounded && !m_Grounded)
-		{
-			coyoteTimer = 0;
-		}
-		if (coyoteTimer <= CoyoteTime)
-		{
-			coyoteTimer += Time.fixedDeltaTime;
-		}
-
-		rbPos = m_Rigidbody2D.position;
-		clipPos = m_ClipCheck.position;
-
-		RaycastHit2D[] hit2D = Physics2D.LinecastAll(oldClipPos, clipPos, m_WhatIsGround);
-		for (int i = 0; i < hit2D.Length; i++)
-		{
-			if (hit2D[i].collider != null)
+			if (jumpCounter == 0 && !m_Grounded)
 			{
-				m_Rigidbody2D.position = oldRbPos;
-				m_Rigidbody2D.velocity = Vector2.zero;
+				jumpCounter = 1;
 			}
+
+			if (!canLadder)
+			{
+				m_Laddered = false;
+			}
+
+			if (!canJumpFromWalls)
+			{
+				onWall = false;
+			}
+
+			if (m_Grounded)
+			{
+				onWall = false;
+			}
+
+			if (m_Grounded && (!wasGrounded || antiBugJumpTimer >= antiBugJumpTime))
+			{
+				jumped = false;
+				jumpCounter = 0;
+				countAntiBugJumpTime = false;
+			}
+			if (wasGrounded && !m_Grounded)
+			{
+				coyoteTimer = 0;
+				catAnimator.SetBool("Grounded", false);
+			}
+			if (!wasGrounded && m_Grounded)
+			{
+				catAnimator.SetBool("Grounded", true);
+			}
+			if (coyoteTimer <= CoyoteTime)
+			{
+				coyoteTimer += Time.fixedDeltaTime;
+			}
+
+			rbPos = m_Rigidbody2D.position;
+			clipPos = m_ClipCheck.position;
+
+			RaycastHit2D[] hit2D = Physics2D.LinecastAll(oldClipPos, clipPos, m_WhatIsGround);
+			for (int i = 0; i < hit2D.Length; i++)
+			{
+				if (hit2D[i].collider != null)
+				{
+					m_Rigidbody2D.position = oldRbPos;
+					m_Rigidbody2D.velocity = Vector2.zero;
+				}
+			}
+			oldClipPos = m_ClipCheck.position;
+			oldRbPos = m_Rigidbody2D.position;
 		}
-		oldClipPos = m_ClipCheck.position;
-		oldRbPos = m_Rigidbody2D.position;
 	}
 
 
 	public void Move(float move, float verticalMove, bool crouch, bool jump, float jumpHolding, bool interact)
 	{
-		if (!interacting)
+		if ((interacting || die) && m_Rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
 		{
+			if (m_Grounded)
+			{
+				m_Rigidbody2D.velocity = Vector2.zero;
+			}
+		}
+		if (!interacting && !paused && !die)
+		{
+			if (move != 0)
+			{
+				catAnimator.SetBool("Running", true);
+			}
+			else
+			{
+				catAnimator.SetBool("Running", false);
+			}
 			if (interact && interactableGameObject != null)
 			{
 				InteractableType interType;
@@ -564,13 +640,6 @@ public class CharacterController2D : MonoBehaviour
 				}
 			}
 		}
-		else
-		{
-			if (m_Grounded)
-			{
-				m_Rigidbody2D.velocity = Vector2.zero;
-			}
-		}
 	}
 	
 	private void Flip()
@@ -589,7 +658,7 @@ public class CharacterController2D : MonoBehaviour
 		if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Trap"))
 		{
 			canvasController.endScreenCanvasActive();
-			interacting = true;
+			die = true;
 		}
 	}
 
@@ -620,6 +689,11 @@ public class CharacterController2D : MonoBehaviour
 	public void SetCanJumpFromWalls(bool _canJumpFromWalls)
 	{
 		canJumpFromWalls = _canJumpFromWalls;
+	}
+
+	public void SetAnimator(Animator animator)
+	{
+		catAnimator = animator;
 	}
 
 	public Vector3 GetTargetMoneyPos()

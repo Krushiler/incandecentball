@@ -12,32 +12,65 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Canvas endScreenCanvas;
     [SerializeField] Canvas levelPickCanvas;
     [SerializeField] Canvas levelFinishCanvas;
-    
+    [SerializeField] Canvas pauseCanvas;
+    [Header("Buttons")]
     [SerializeField] Button restartButton;
     [SerializeField] Button restartButton1;
+    [SerializeField] Button restartButton2;
     [SerializeField] Button closeLevelsButton;
     [SerializeField] Button nextLevelButton;
     [SerializeField] Button homeButton;
     [SerializeField] Button homeButton1;
+    [SerializeField] Button homeButton2;
+    [SerializeField] Button continueButton;
+    [Header("Sliders")]
+    [SerializeField] Slider volumeSlider;
+    [SerializeField] Slider musicSlider;
+
     [SerializeField] Animator endScreenAnimator;
     [SerializeField] Animator levelScreenAnimator;
     [SerializeField] Animator finishLevelAnimator;
+    [SerializeField] Animator pauseAnimator;
     [SerializeField] Canvas fadeCanvas;
     [SerializeField] Animator fadeAnimator;
     [SerializeField] CharacterController2D cat;
     [SerializeField] TextMeshProUGUI prompt;
     [SerializeField] Text timeText;
     [SerializeField] Text timeRecordText;
+    [SerializeField] AudioSource musicSource;   
+    
     
 
     int levelNumber;
     bool isFinalLevel;
     string levelSection;
+    bool decreaseMusic = false;
 
     void Start()
     {
+        if (!PlayerPrefs.HasKey("MusicVolume"))
+        {
+            musicSlider.SetValueWithoutNotify(1f);
+        }
+        else
+        {
+            musicSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("MusicVolume"));
+            musicSource.volume = PlayerPrefs.GetFloat("MusicVolume");
+        }
+        if (!PlayerPrefs.HasKey("SoundVolume"))
+        {
+            volumeSlider.SetValueWithoutNotify(1f);
+        }
+        else
+        {
+            volumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("SoundVolume"));
+            AudioListener.volume = PlayerPrefs.GetFloat("SoundVolume");
+        }
         showCanvas(guiCanvas);
-        
+
+        musicSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("MusicVolume", musicSlider.value); musicSource.volume = musicSlider.value; });
+        volumeSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("SoundVolume", musicSlider.value); AudioListener.volume = volumeSlider.value; });
+
         closeLevelsButton.onClick.AddListener(closeMenu);
         
         levelNumber = cat.GetLevelNumber();
@@ -63,8 +96,14 @@ public class CanvasController : MonoBehaviour
         {
             loadLevel("Home");
         });
+        homeButton2.onClick.AddListener(delegate
+        {
+            loadLevel("Home");
+        });
         restartButton.onClick.AddListener(delegate { restartLevel(); });
         restartButton1.onClick.AddListener(delegate { restartLevel(); });
+        restartButton2.onClick.AddListener(delegate { restartLevel(); });
+        continueButton.onClick.AddListener(delegate { unPauseGameClick(); });
     }
 
     public IEnumerator start()
@@ -81,8 +120,10 @@ public class CanvasController : MonoBehaviour
     public void loadLevel(string levelName)
     {
         //Debug.Log(levelName);
+        decreaseMusic = true;
         StartCoroutine(loadLevelWaiter(levelName));
         //SceneManager.LoadScene(levelName);
+        
     }
 
     public IEnumerator loadLevelWaiter(string levelName)
@@ -94,6 +135,7 @@ public class CanvasController : MonoBehaviour
 
     public void restartLevel()
     {
+        decreaseMusic = true;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         //StartCoroutine(loadLevelWaiter(SceneManager.GetActiveScene().name));
         StartCoroutine(restartLevelWaiter());
@@ -111,12 +153,31 @@ public class CanvasController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (decreaseMusic)
+        {
+            musicSource.volume -= Time.deltaTime;
+        }
     }
 
     public void closeMenu()
     {
         guiCanvasActive();
+    }
+
+    public void pauseGame()
+    {
+        showCanvas(pauseCanvas);
+        pauseAnimator.SetTrigger("open");
+    }
+
+    public void unPauseGameClick()
+    {
+        cat.UnPauseGame();
+    }
+
+    public void unPauseGame()
+    {
+        showCanvas(guiCanvas);
     }
 
     public void levelCanvasActive()
@@ -147,6 +208,7 @@ public class CanvasController : MonoBehaviour
 
     void showCanvas(Canvas can)
     {
+        pauseCanvas.gameObject.SetActive(false);
         guiCanvas.gameObject.SetActive(false);
         levelPickCanvas.gameObject.SetActive(false);
         endScreenCanvas.gameObject.SetActive(false);
