@@ -1,19 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CanvasController : MonoBehaviour
 {
+    [Header("Controls")]
+
+    [SerializeField] Joystick moveJoystick;
+    [SerializeField] Button jumpButton;
+    [SerializeField] Button crouchButton;
+    [SerializeField] Button interactButton;
+
+    [Header("Canvases")]
+
     [SerializeField] Canvas guiCanvas;
     [SerializeField] Canvas endScreenCanvas;
     [SerializeField] Canvas levelPickCanvas;
     [SerializeField] Canvas levelFinishCanvas;
     [SerializeField] Canvas pauseCanvas;
+    [SerializeField] Canvas controlsCanvas;
     [Header("Buttons")]
+    
     [SerializeField] Button restartButton;
     [SerializeField] Button restartButton1;
     [SerializeField] Button restartButton2;
@@ -23,6 +33,7 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Button homeButton1;
     [SerializeField] Button homeButton2;
     [SerializeField] Button continueButton;
+    [SerializeField] Button pauseButton;
     [Header("Sliders")]
     [SerializeField] Slider volumeSlider;
     [SerializeField] Slider musicSlider;
@@ -38,6 +49,8 @@ public class CanvasController : MonoBehaviour
     [SerializeField] Text timeText;
     [SerializeField] Text timeRecordText;
     [SerializeField] AudioSource musicSource;   
+
+    
     
     
 
@@ -48,6 +61,7 @@ public class CanvasController : MonoBehaviour
 
     void Start()
     {
+        interactButton.gameObject.SetActive(false);
         if (!PlayerPrefs.HasKey("MusicVolume"))
         {
             musicSlider.SetValueWithoutNotify(1f);
@@ -67,6 +81,7 @@ public class CanvasController : MonoBehaviour
             AudioListener.volume = PlayerPrefs.GetFloat("SoundVolume");
         }
         showCanvas(guiCanvas);
+        controlsCanvas.gameObject.SetActive(true);
 
         musicSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("MusicVolume", musicSlider.value); musicSource.volume = musicSlider.value; });
         volumeSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("SoundVolume", musicSlider.value); AudioListener.volume = volumeSlider.value; });
@@ -104,6 +119,12 @@ public class CanvasController : MonoBehaviour
         restartButton1.onClick.AddListener(delegate { restartLevel(); });
         restartButton2.onClick.AddListener(delegate { restartLevel(); });
         continueButton.onClick.AddListener(delegate { unPauseGameClick(); });
+        pauseButton.onClick.AddListener(delegate { cat.PauseGame(); });
+    }
+
+    public Joystick getJoystick()
+    {
+        return moveJoystick;
     }
 
     public IEnumerator start()
@@ -178,6 +199,7 @@ public class CanvasController : MonoBehaviour
     public void unPauseGame()
     {
         showCanvas(guiCanvas);
+        controlsCanvas.gameObject.SetActive(true);
     }
 
     public void levelCanvasActive()
@@ -190,11 +212,13 @@ public class CanvasController : MonoBehaviour
     public void guiCanvasActive()
     {
         showCanvas(guiCanvas);
+        controlsCanvas.gameObject.SetActive(true);
         cat.SetInteracting(false);
     }
 
     public void endScreenCanvasActive()
     {
+        decreaseMusic = true;
         showCanvas(endScreenCanvas);
         endScreenAnimator.SetTrigger("open");
     }
@@ -206,13 +230,14 @@ public class CanvasController : MonoBehaviour
 
     }
 
-    void showCanvas(Canvas can)
+    private void showCanvas(Canvas can)
     {
         pauseCanvas.gameObject.SetActive(false);
         guiCanvas.gameObject.SetActive(false);
         levelPickCanvas.gameObject.SetActive(false);
         endScreenCanvas.gameObject.SetActive(false);
         levelFinishCanvas.gameObject.SetActive(false);
+        controlsCanvas.gameObject.SetActive(false);
         can.gameObject.SetActive(true);
     }
 
@@ -227,4 +252,27 @@ public class CanvasController : MonoBehaviour
         prompt.gameObject.SetActive(false);
     }
 
+    public Button getJumpButton()
+    {
+        return jumpButton;
+    }
+
+    public Button getCrouchButton()
+    {
+        return crouchButton;
+    }
+
+    public Button getInteractButton()
+    {
+        return interactButton;
+    }
+
+    public void activateInteractButton()
+    {
+        interactButton.gameObject.SetActive(true);
+    }
+    public void deactivateInteractButton()
+    {
+        interactButton.gameObject.SetActive(false);
+    }
 }

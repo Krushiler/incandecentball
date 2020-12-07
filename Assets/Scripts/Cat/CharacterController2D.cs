@@ -86,6 +86,10 @@ public class CharacterController2D : MonoBehaviour
 
 	private void Awake()
 	{
+		if (!PlayerPrefs.HasKey("LevelCat0Money") && levelSection!="LevelCat")
+		{
+			canvasController.loadLevel("Tutorial");
+		}
 		m_WhatIsGround = m_WhatIsGroundDef | m_WhatIsWallJump;
 		Time.timeScale = 1;
 		uiManager = GetComponent<UIManager>();
@@ -167,6 +171,7 @@ public class CharacterController2D : MonoBehaviour
 
 	public void FinishLevel()
 	{
+		
 		countTime = false;
 		canvasController.levelFinishCanvasActive();
 		interacting = true;
@@ -196,13 +201,30 @@ public class CharacterController2D : MonoBehaviour
 		}
 		if (!PlayerPrefs.HasKey("completedLevels"))
 		{
-			PlayerPrefs.SetInt("completedLevels", 1);
-		}
+			PlayerPrefs.SetInt("completedLevels", 0);
+ 		}
 		else
 		{
-			if (PlayerPrefs.GetInt("completedLevels") < levelNumber)
+			if (levelSection == "BonusCat")
 			{
-				PlayerPrefs.SetInt("completedLevels", levelNumber);
+				if (PlayerPrefs.HasKey("completedLevelsBonusCat"))
+				{
+					if (PlayerPrefs.GetInt("completedLevelsBonusCat") < levelNumber)
+					{
+						PlayerPrefs.SetInt("completedLevelsBonusCat", levelNumber);
+					}
+				}
+				else
+				{
+					PlayerPrefs.SetInt("completedLevelsBonusCat", 1);
+				}
+			}
+			else
+			{
+				if (PlayerPrefs.GetInt("completedLevels") < levelNumber)
+				{
+					PlayerPrefs.SetInt("completedLevels", levelNumber);
+				}
 			}
 		}
 		
@@ -300,23 +322,30 @@ public class CharacterController2D : MonoBehaviour
 							playerMoney = PlayerPrefs.GetInt("Money");
 						}
 
-						if (bestMoney < money)
+						if (bestMoney <= money)
 						{
 							if (money >= moneyToEnd)
 							{
 								PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "AllMoney", 1);
 							}
 							PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "Money", money);
-							PlayerPrefs.SetInt("Money", playerMoney + money - bestMoney);
+							if ((levelNumber != 0 && levelSection != "LevelCat") || (levelSection != "BonusCat"))
+							{
+								PlayerPrefs.SetInt("Money", playerMoney + money - bestMoney);
+							}
 						}
-						
+
 						FinishLevel();
 					}
 					else
 					{
 						canvasController.EnablePrompt(interactableGameObject.GetComponent<Interactable>().getText());
+						canvasController.activateInteractButton();
 					}
 				}
+			}else if (wasInteractedZone)
+			{
+				canvasController.deactivateInteractButton();
 			}
 			if (wasInteractedZone && !inInteractZone)
 			{
@@ -412,11 +441,23 @@ public class CharacterController2D : MonoBehaviour
 			oldClipPos = m_ClipCheck.position;
 			oldRbPos = m_Rigidbody2D.position;
 		}
+		if (paused)
+		{
+			catAnimator.speed = 0;
+		}
+		else
+		{
+			catAnimator.speed = 1;
+		}
 	}
 
 
 	public void Move(float move, float verticalMove, bool crouch, bool jump, float jumpHolding, bool interact)
 	{
+		if (interacting)
+		{
+			catAnimator.SetBool("Running", false);
+		}
 		if ((interacting || die) && m_Rigidbody2D.bodyType == RigidbodyType2D.Dynamic)
 		{
 			if (m_Grounded)
@@ -447,8 +488,15 @@ public class CharacterController2D : MonoBehaviour
 			}
 
 			moveHor = move;
+			catAnimator.SetBool("Laddering", false);
+			catAnimator.SetBool("Povis", false);
 			if (m_Laddered)
 			{
+				catAnimator.SetBool("Laddering", true);
+				if (verticalMove != 0)
+				{
+					catAnimator.SetBool("Running", true);
+				}
 				if (m_CrouchDisableCollider != null)
 					m_CrouchDisableCollider.enabled = true;
 
@@ -457,6 +505,7 @@ public class CharacterController2D : MonoBehaviour
 					m_wasCrouching = false;
 					OnCrouchEvent.Invoke(false);
 				}
+
 				if (move > 0 && !m_FacingRight)
 				{
 					// ... flip the player.
@@ -485,10 +534,12 @@ public class CharacterController2D : MonoBehaviour
 					m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce * jumpHolding));
 					antiBugJumpTimer = 0;
 					countAntiBugJumpTime = true;
+					catAnimator.SetBool("Laddering", false);
 				}
 			}
 			else if (onWall)
 			{
+				catAnimator.SetBool("Povis", true);
 				if (m_CrouchDisableCollider != null)
 					m_CrouchDisableCollider.enabled = true;
 
@@ -618,7 +669,7 @@ public class CharacterController2D : MonoBehaviour
 				// If the player should jump...
 				if (((m_Grounded || coyoteTimer < CoyoteTime) && jump && !jumped) || ((jumpCounter < jumpsPerJump) && jump))
 				{
-					if (!Physics2D.OverlapCircle(m_CeilingCheck.transform.position, 0.5f, m_WhatIsGroundDef))
+					if (!crouch)
 					{
 						if (m_CrouchDisableCollider != null)
 							m_CrouchDisableCollider.enabled = true;
@@ -655,10 +706,15 @@ public class CharacterController2D : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Trap"))
+		if (!die)
 		{
-			canvasController.endScreenCanvasActive();
-			die = true;
+			if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Trap"))
+			{
+				canvasController.endScreenCanvasActive();
+				catAnimator.SetTrigger("Die");
+				die = true;
+				m_Rigidbody2D.velocity = Vector2.zero;
+			}
 		}
 	}
 
@@ -717,6 +773,16 @@ public class CharacterController2D : MonoBehaviour
 	public int GetLevelNumber()
 	{
 		return levelNumber;
+	}
+
+	public Joystick GetJoystick()
+	{
+		return canvasController.getJoystick();
+	}
+
+	public CanvasController GetCanvasController()
+	{
+		return canvasController;
 	}
 
 }

@@ -2,27 +2,53 @@
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCatMovement : MonoBehaviour
 {
     [SerializeField] CharacterController2D controller;
     [SerializeField] float jumpHolingTime = 0.2f;
+    CanvasController canvasController;
+
+    [SerializeField] Sprite sitImage;
+    [SerializeField] Sprite standImage;
 
     //[SerializeField] float speed;
     bool jump = false;
     bool crouch = false;
     bool interact = false;
+    Joystick joystick;
+    ButtonControl jumpButton;
+    ButtonControl crouchButton;
+    ButtonControl interactButton;
+
+    void setSitImage()
+    {
+        crouchButton.gameObject.GetComponent<Image>().sprite = sitImage;
+    }
+
+    void setStandImage()
+    {
+        crouchButton.gameObject.GetComponent<Image>().sprite = standImage;
+    }
 
     void Start()
     {
         controller = GetComponent<CharacterController2D>();
+        canvasController = controller.GetCanvasController();
+        joystick = canvasController.getJoystick();
+        jumpButton = canvasController.getJumpButton().GetComponent<ButtonControl>();
+        crouchButton = canvasController.getCrouchButton().GetComponent<ButtonControl>();
+        interactButton = canvasController.getInteractButton().GetComponent<ButtonControl>();
+        setSitImage();
     }
-
+    
     float horizontalMove = 0;
     float verticalMove = 0;
     float jumpHolingTimer = 0;
     bool countJumpTimer = false;
-    bool jumped = false; 
+    bool jumped = false;
+    
 
     // Update is called once per frame
     void Update()
@@ -32,8 +58,41 @@ public class PlayerCatMovement : MonoBehaviour
             jumpHolingTimer += Time.deltaTime;
         }*/
         horizontalMove = Input.GetAxisRaw("Horizontal");
+        if (horizontalMove == 0)
+        {
+            float joyHor = joystick.Horizontal;
+            if (joyHor > 0.2f)
+            {
+                joyHor = 1;
+            }else if (joyHor < -0.2f)
+            {
+                joyHor = -1;
+            }
+            else
+            {
+                joyHor = 0;
+            }
+            horizontalMove = joyHor;
+        }
         verticalMove = Input.GetAxisRaw("Vertical");
-        if (Input.GetButtonDown("Jump"))
+        if (verticalMove == 0)
+        {
+            float joyVer = joystick.Vertical;
+            if (joyVer > 0.2f)
+            {
+                joyVer = 1;
+            }
+            else if (joyVer < -0.2f)
+            {
+                joyVer = -1;
+            }
+            else
+            {
+                joyVer = 0;
+            }
+            verticalMove = joyVer;
+        }
+        if (Input.GetButtonDown("Jump") | jumpButton.buttonPressedDown)
         {
             //jumpHolingTimer = jumpHolingTime/2;
             // countJumpTimer = true;
@@ -53,20 +112,31 @@ public class PlayerCatMovement : MonoBehaviour
             crouch = false;
         }*/
 
-        if (Input.GetButtonDown("Interact"))
+        if (Input.GetButtonDown("Interact") || interactButton.buttonPressedDown)
         {
             interact = true;
         }
 
-        if (Input.GetButtonDown("Crouch"))
+        if (crouch)
+        {
+            setStandImage();
+        }
+        else
+        {
+            setSitImage();
+        }
+
+        if (Input.GetButtonDown("Crouch") || crouchButton.buttonPressedDown)
         {
             if (!crouch)
             {
                 crouch = true;
+                setStandImage();
             }
             else
             {
                 crouch = false;
+                setStandImage();
             }
         }
     }

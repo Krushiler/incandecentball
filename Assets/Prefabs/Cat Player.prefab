@@ -376,10 +376,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115649539726824285}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.214, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children:
-  - {fileID: 393919209762978654}
+  - {fileID: 9044727745083801894}
   m_Father: {fileID: 1115649539845776464}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -397,7 +397,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCat: {fileID: 1115649539845776467}
   speed: 39.89
-  animator: {fileID: 2688376894927157008}
+  animator: {fileID: 8068655428078604806}
   jumpsPerJump: 1
   jumpForce: 600
   ladderSpeed: 40
@@ -499,6 +499,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 1115649539845776467}
   jumpHolingTime: 0.2
+  sitImage: {fileID: 21300000, guid: b45fdf356b6cfd0438a8464d88e7a0ae, type: 3}
+  standImage: {fileID: 21300000, guid: 199a58bac0e54684db289c92e36fdb91, type: 3}
 --- !u!114 &1115649539845776467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -650,7 +652,7 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115649539845776465}
   m_Enabled: 1
---- !u!1 &4718012308985506244
+--- !u!1 &6073921905332101072
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -658,37 +660,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 393919209762978654}
-  - component: {fileID: 2635539544618127967}
-  - component: {fileID: 2688376894927157008}
+  - component: {fileID: 9044727745083801894}
+  - component: {fileID: 909959815058091002}
+  - component: {fileID: 8068655428078604806}
   m_Layer: 0
-  m_Name: idle_0
+  m_Name: idle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &393919209762978654
+--- !u!4 &9044727745083801894
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4718012308985506244}
+  m_GameObject: {fileID: 6073921905332101072}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.01, y: -0.11, z: 0}
-  m_LocalScale: {x: 0.8389805, y: 0.8389805, z: 0.58728635}
+  m_LocalPosition: {x: 0.03, y: 0.11, z: 0}
+  m_LocalScale: {x: 0.89906806, y: 0.89906806, z: 0.6293476}
   m_Children: []
   m_Father: {fileID: 1115649539726824284}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2635539544618127967
+--- !u!212 &909959815058091002
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4718012308985506244}
+  m_GameObject: {fileID: 6073921905332101072}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -721,29 +723,28 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2073685336235588006, guid: 125946ada61e14640b7c258a1be57f63,
-    type: 3}
+  m_Sprite: {fileID: 21300000, guid: b2fe56f142448234cb431e2376ee5d9a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.2, y: 2.59}
+  m_Size: {x: 2, y: 3}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &2688376894927157008
+--- !u!95 &8068655428078604806
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4718012308985506244}
+  m_GameObject: {fileID: 6073921905332101072}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3a6299dc4d72dd94e93214b03b554748, type: 2}
+  m_Controller: {fileID: 9100000, guid: b2c02e9401fc46f4a9cf54df74b9d2f5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

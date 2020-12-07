@@ -21,7 +21,7 @@ public class PageSwiper : MonoBehaviour, IDragHandler, IEndDragHandler
     private int currentPage = 1;
 
     // Start is called before the first frame update
-    void Start()
+    void Start()    
     {
         panelLocation = transform.position;
         width = Screen.width * (width / 2340f);
