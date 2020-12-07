@@ -157,8 +157,6 @@ public class CanvasController : MonoBehaviour
     public void restartLevel()
     {
         decreaseMusic = true;
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        //StartCoroutine(loadLevelWaiter(SceneManager.GetActiveScene().name));
         StartCoroutine(restartLevelWaiter());
     }
 
@@ -168,7 +166,6 @@ public class CanvasController : MonoBehaviour
         
         yield return new WaitForSeconds(1);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // Update is called once per frame
