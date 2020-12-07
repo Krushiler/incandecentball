@@ -490,6 +490,7 @@ public class CharacterController2D : MonoBehaviour
 			moveHor = move;
 			catAnimator.SetBool("Laddering", false);
 			catAnimator.SetBool("Povis", false);
+			catAnimator.SetBool("Crouched", false);
 			if (m_Laddered)
 			{
 				catAnimator.SetBool("Laddering", true);
@@ -602,8 +603,10 @@ public class CharacterController2D : MonoBehaviour
 					// If crouching
 					if (crouch)
 					{
+						catAnimator.SetBool("Crouched", true);
 						if (!m_wasCrouching)
 						{
+							
 							m_wasCrouching = true;
 							OnCrouchEvent.Invoke(true);
 						}
