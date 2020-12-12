@@ -303,7 +303,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -9978,6 +9978,66 @@ PrefabInstance:
     - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3057639420262220235, guid: f63aa25a483f06a4e9db53fe52ca3127,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3716557728460867129, guid: f63aa25a483f06a4e9db53fe52ca3127,

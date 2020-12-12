@@ -37,7 +37,7 @@ public class CanvasController : MonoBehaviour
     [Header("Sliders")]
     [SerializeField] Slider volumeSlider;
     [SerializeField] Slider musicSlider;
-
+    [Header("Editor")]
     [SerializeField] Animator endScreenAnimator;
     [SerializeField] Animator levelScreenAnimator;
     [SerializeField] Animator finishLevelAnimator;
@@ -48,7 +48,8 @@ public class CanvasController : MonoBehaviour
     [SerializeField] TextMeshProUGUI prompt;
     [SerializeField] Text timeText;
     [SerializeField] Text timeRecordText;
-    [SerializeField] AudioSource musicSource;   
+    [SerializeField] AudioSource musicSource;
+    [SerializeField] Image stateImage;
 
     
     
@@ -58,6 +59,11 @@ public class CanvasController : MonoBehaviour
     bool isFinalLevel;
     string levelSection;
     bool decreaseMusic = false;
+
+    public Image getStateImage()
+    {
+        return stateImage;
+    }
 
     void Start()
     {
@@ -81,10 +87,15 @@ public class CanvasController : MonoBehaviour
             AudioListener.volume = PlayerPrefs.GetFloat("SoundVolume");
         }
         showCanvas(guiCanvas);
+#if UNITY_STANDALONE || UNITY_WEBGL
+        stateImage.gameObject.SetActive(true);
+#endif
+#if UNITY_ANDROID || UNITY_IOS
         controlsCanvas.gameObject.SetActive(true);
-
+        stateImage.gameObject.SetActive(false);
+#endif
         musicSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("MusicVolume", musicSlider.value); musicSource.volume = musicSlider.value; });
-        volumeSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("SoundVolume", musicSlider.value); AudioListener.volume = volumeSlider.value; });
+        volumeSlider.onValueChanged.AddListener(delegate { PlayerPrefs.SetFloat("SoundVolume", volumeSlider.value); AudioListener.volume = volumeSlider.value; });
 
         closeLevelsButton.onClick.AddListener(closeMenu);
         
@@ -196,7 +207,9 @@ public class CanvasController : MonoBehaviour
     public void unPauseGame()
     {
         showCanvas(guiCanvas);
+#if UNITY_ANDROID || UNITY_IOS
         controlsCanvas.gameObject.SetActive(true);
+#endif
     }
 
     public void levelCanvasActive()
@@ -209,7 +222,9 @@ public class CanvasController : MonoBehaviour
     public void guiCanvasActive()
     {
         showCanvas(guiCanvas);
+#if UNITY_ANDROID || UNITY_IOS
         controlsCanvas.gameObject.SetActive(true);
+#endif
         cat.SetInteracting(false);
     }
 

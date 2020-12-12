@@ -19,8 +19,8 @@ TagManager:
   - Trap
   - Interactable
   - WallJumping
-  - 
-  - 
+  - Enemy
+  - Player
   - 
   - 
   - 

@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class CharacterController2D : MonoBehaviour
 {                     // Amount of force added when the player jumps.
@@ -24,7 +25,7 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private LayerMask m_WhatIsLadder;							// A mask determining what is ladder to the character
 	[SerializeField] private LayerMask m_WhatIsWallJump;							// A mask determining what is ladder to the character
 	[SerializeField] private LayerMask m_WhatIsInteractable;							// A mask determining what is ladder to the character
-	[SerializeField] private LayerMask MoneyMask;							
+	[SerializeField] private LayerMask MoneyMask;				
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
 	[SerializeField] private Transform m_CeilingCheckLT;							// A position marking where to check for ceilings
@@ -38,6 +39,7 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private Transform m_LadderCheckRB;							// A position marking where to check for ceilings
 	[SerializeField] private Transform m_ClipCheck;							// A position marking where to check for ceilings
 	[SerializeField] private Collider2D m_CrouchDisableCollider;                // A collider that will be disabled when crouching
+	[SerializeField] private Collider2D m_BottomCollider;                // A collider that will be disabled when crouching
 	[SerializeField] float CoyoteTime;
 
 	float levelTimer = 0f;
@@ -329,7 +331,7 @@ public class CharacterController2D : MonoBehaviour
 								PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "AllMoney", 1);
 							}
 							PlayerPrefs.SetInt(levelSection + levelNumber.ToString() + "Money", money);
-							if ((levelNumber != 0 && levelSection != "LevelCat") || (levelSection != "BonusCat"))
+							if (levelNumber != 0)
 							{
 								PlayerPrefs.SetInt("Money", playerMoney + money - bestMoney);
 							}
@@ -449,6 +451,7 @@ public class CharacterController2D : MonoBehaviour
 		{
 			catAnimator.speed = 1;
 		}
+		
 	}
 
 
@@ -506,7 +509,6 @@ public class CharacterController2D : MonoBehaviour
 					m_wasCrouching = false;
 					OnCrouchEvent.Invoke(false);
 				}
-
 				if (move > 0 && !m_FacingRight)
 				{
 					// ... flip the player.
@@ -518,6 +520,7 @@ public class CharacterController2D : MonoBehaviour
 					// ... flip the player.
 					Flip();
 				}
+
 				move *= ladderSpeed;
 				verticalMove *= ladderSpeed;
 				m_Rigidbody2D.gravityScale = 0;
@@ -568,6 +571,7 @@ public class CharacterController2D : MonoBehaviour
 
 				if (jump)
 				{
+					catAnimator.SetBool("Povis", false);
 					jumpCounter++;
 					// Add a vertical force to the player.
 					escapeFromWall = true;
@@ -612,7 +616,10 @@ public class CharacterController2D : MonoBehaviour
 						}
 
 						// Reduce the speed by the crouchSpeed multiplier
-						move *= m_CrouchSpeed;
+						if (m_Grounded)
+						{
+							move *= m_CrouchSpeed;
+						}
 
 						// Disable one of the colliders when crouching
 						if (m_CrouchDisableCollider != null)
@@ -655,19 +662,17 @@ public class CharacterController2D : MonoBehaviour
 							m_Rigidbody2D.AddForce(targetVelocity * 10);
 						}
 					}
-
-					// If the input is moving the player right and the player is facing left...
-					if (move > 0 && !m_FacingRight)
-					{
-						// ... flip the player.
-						Flip();
-					}
-					// Otherwise if the input is moving the player left and the player is facing right...
-					else if (move < 0 && m_FacingRight)
-					{
-						// ... flip the player.
-						Flip();
-					}
+				}
+				if (move > 0 && !m_FacingRight)
+				{
+					// ... flip the player.
+					Flip();
+				}
+				// Otherwise if the input is moving the player left and the player is facing right...
+				else if (move < 0 && m_FacingRight)
+				{
+					// ... flip the player.
+					Flip();
 				}
 				// If the player should jump...
 				if (((m_Grounded || coyoteTimer < CoyoteTime) && jump && !jumped) || ((jumpCounter < jumpsPerJump) && jump))
@@ -711,13 +716,60 @@ public class CharacterController2D : MonoBehaviour
 	{
 		if (!die)
 		{
+			
 			if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Trap"))
 			{
-				canvasController.endScreenCanvasActive();
-				catAnimator.SetTrigger("Die");
-				die = true;
-				m_Rigidbody2D.velocity = Vector2.zero;
+				bool canDie = true;
+				if (interactableGameObject != null)
+				{
+					if (interactableGameObject.GetComponent<Interactable>().getType() == InteractableType.LevelEnder)
+					{
+						canDie = false;
+					}
+				}
+				if (canDie)
+				{
+					canvasController.endScreenCanvasActive();
+					catAnimator.SetTrigger("Die");
+					die = true;
+					m_Rigidbody2D.velocity = Vector2.zero;
+				}
 			}
+
+			if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+			{
+				if (collision.collider.gameObject.GetComponent<Enemy>().GetEnemyType() == EnemyType.JumpOnHead)
+				{
+					Enemy thisEnemy = collision.collider.gameObject.GetComponent<Enemy>();
+					
+					if (transform.position.y - 1f >= thisEnemy.transform.position.y)
+					{
+						Destroy(thisEnemy.gameObject);
+						m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, 0);
+						m_Rigidbody2D.AddForce(new Vector2(0, m_JumpForce));
+					}
+					else
+					{
+						bool canDie = true;
+
+						if (interactableGameObject != null)
+						{
+							if (interactableGameObject.GetComponent<Interactable>().getType() == InteractableType.LevelEnder)
+							{
+								canDie = false;
+							}
+						}
+						if (canDie)
+						{
+							canvasController.endScreenCanvasActive();
+							catAnimator.SetTrigger("Die");
+							die = true;
+							m_Rigidbody2D.velocity = Vector2.zero;
+						}
+					}
+				}
+			}
+
 		}
 	}
 

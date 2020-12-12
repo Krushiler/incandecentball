@@ -12,6 +12,9 @@ public class PlayerCatMovement : MonoBehaviour
 
     [SerializeField] Sprite sitImage;
     [SerializeField] Sprite standImage;
+    [SerializeField] Sprite sitCatImage;
+    [SerializeField] Sprite standCatImage;
+
 
     //[SerializeField] float speed;
     bool jump = false;
@@ -21,15 +24,18 @@ public class PlayerCatMovement : MonoBehaviour
     ButtonControl jumpButton;
     ButtonControl crouchButton;
     ButtonControl interactButton;
+    Image stateImage;
 
     void setSitImage()
     {
         crouchButton.gameObject.GetComponent<Image>().sprite = sitImage;
+        stateImage.sprite = standCatImage;
     }
 
     void setStandImage()
     {
         crouchButton.gameObject.GetComponent<Image>().sprite = standImage;
+        stateImage.sprite = sitCatImage;
     }
 
     void Start()
@@ -40,6 +46,7 @@ public class PlayerCatMovement : MonoBehaviour
         jumpButton = canvasController.getJumpButton().GetComponent<ButtonControl>();
         crouchButton = canvasController.getCrouchButton().GetComponent<ButtonControl>();
         interactButton = canvasController.getInteractButton().GetComponent<ButtonControl>();
+        stateImage = canvasController.getStateImage();
         setSitImage();
     }
     

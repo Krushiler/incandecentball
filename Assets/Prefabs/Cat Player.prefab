@@ -501,6 +501,8 @@ MonoBehaviour:
   jumpHolingTime: 0.2
   sitImage: {fileID: 21300000, guid: b45fdf356b6cfd0438a8464d88e7a0ae, type: 3}
   standImage: {fileID: 21300000, guid: 199a58bac0e54684db289c92e36fdb91, type: 3}
+  sitCatImage: {fileID: 21300000, guid: 5cee79bd0bbba3041a7385b90d7e06cb, type: 3}
+  standCatImage: {fileID: 21300000, guid: b2fe56f142448234cb431e2376ee5d9a, type: 3}
 --- !u!114 &1115649539845776467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,6 +551,7 @@ MonoBehaviour:
   m_LadderCheckRB: {fileID: 6549901008366767316}
   m_ClipCheck: {fileID: 1115649538204755989}
   m_CrouchDisableCollider: {fileID: 7677282589684026951}
+  m_BottomCollider: {fileID: 8353654328736652471}
   CoyoteTime: 0.15
   OnLandEvent:
     m_PersistentCalls:
