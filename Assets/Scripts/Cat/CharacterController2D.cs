@@ -1,3 +1,4 @@
+using Cinemachine;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class CharacterController2D : MonoBehaviour
 	[Header("Cat Characteristics")]
 	[SerializeField] CanvasController canvasController;
 	[SerializeField] Camera playerCamera;
+	[SerializeField] CinemachineVirtualCamera cinemachinePlayerCamera;
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
 	[SerializeField] private LayerMask m_WhatIsGroundDef;							// A mask determining what is ground to the character
@@ -84,7 +86,18 @@ public class CharacterController2D : MonoBehaviour
 
 	LayerMask m_WhatIsGround;
 
+	float shakeTimer = 0;
+	float shakeTimerTotal = 0;
+	float shakeIntensity = 0;
 
+	private void ShakeCamera(float intensity, float shakeTime)
+	{
+		CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin = cinemachinePlayerCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+		cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = intensity;
+		shakeTimer = shakeTime;
+		shakeTimerTotal = shakeTime;
+		shakeIntensity = intensity;
+	}
 
 	private void Awake()
 	{
@@ -154,6 +167,12 @@ public class CharacterController2D : MonoBehaviour
 
 	private void Update()
 	{
+		if (shakeTimer > 0)
+		{
+			shakeTimer -= Time.deltaTime;
+			CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin = cinemachinePlayerCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+			cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = Mathf.Lerp(shakeIntensity, 0f, (1 - (shakeTimer/shakeTimerTotal)));
+		}
 		if (countTime)
 		{
 			levelTimer += Time.deltaTime;
@@ -733,6 +752,7 @@ public class CharacterController2D : MonoBehaviour
 					catAnimator.SetTrigger("Die");
 					die = true;
 					m_Rigidbody2D.velocity = Vector2.zero;
+					ShakeCamera(2, 0.2f);
 				}
 			}
 
@@ -765,6 +785,7 @@ public class CharacterController2D : MonoBehaviour
 							catAnimator.SetTrigger("Die");
 							die = true;
 							m_Rigidbody2D.velocity = Vector2.zero;
+							ShakeCamera(2, 0.2f);
 						}
 					}
 				}

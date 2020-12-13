@@ -79,6 +79,8 @@ MonoBehaviour:
   spawningShar: {fileID: 7848216983348876291, guid: a45f994a1e66e3d4286b8d83033a0a04,
     type: 3}
   pivot: {fileID: 1466040991352798314}
+  startInterval: 0
+  speed: 5
 --- !u!1 &1466040992831131843
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,7 +150,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 11
   m_Sprite: {fileID: -7980591173135389859, guid: eaa9b07aa8da6ef46914300bef9ac083,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
