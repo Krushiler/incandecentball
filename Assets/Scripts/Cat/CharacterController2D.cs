@@ -28,6 +28,7 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private LayerMask m_WhatIsWallJump;							// A mask determining what is ladder to the character
 	[SerializeField] private LayerMask m_WhatIsInteractable;							// A mask determining what is ladder to the character
 	[SerializeField] private LayerMask MoneyMask;				
+	[SerializeField] private LayerMask GailMask;				
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
 	[SerializeField] private Transform m_CeilingCheckLT;							// A position marking where to check for ceilings
@@ -256,6 +257,9 @@ public class CharacterController2D : MonoBehaviour
 		uiManager.UpdateMoney(money, moneyToEnd, levelSection);
 	}
 	float moveHor = 0;
+
+	float lastVel = 0;
+
 	private void FixedUpdate()
 	{
 		if (!paused && !die)
@@ -461,6 +465,8 @@ public class CharacterController2D : MonoBehaviour
 			}
 			oldClipPos = m_ClipCheck.position;
 			oldRbPos = m_Rigidbody2D.position;
+
+			lastVel = m_Rigidbody2D.velocity.y;
 		}
 		if (paused)
 		{
@@ -752,11 +758,10 @@ public class CharacterController2D : MonoBehaviour
 					catAnimator.SetTrigger("Die");
 					die = true;
 					m_Rigidbody2D.velocity = Vector2.zero;
-					ShakeCamera(2, 0.2f);
+					ShakeCamera(2, 0.4f);
 				}
 			}
-
-			if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+			else if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
 			{
 				if (collision.collider.gameObject.GetComponent<Enemy>().GetEnemyType() == EnemyType.JumpOnHead)
 				{
@@ -785,7 +790,24 @@ public class CharacterController2D : MonoBehaviour
 							catAnimator.SetTrigger("Die");
 							die = true;
 							m_Rigidbody2D.velocity = Vector2.zero;
-							ShakeCamera(2, 0.2f);
+							ShakeCamera(2, 0.4f);
+						}
+					}
+				}
+			}
+			else
+			{
+				Collider2D[] colliders = Physics2D.OverlapAreaAll(m_GroundCheck.position, m_GroundCheckRB.position, GailMask);
+
+				for (int i = 0; i < colliders.Length; i++)
+				{
+					if (colliders[i].gameObject != gameObject)
+					{
+						if (colliders[i].gameObject.GetComponent<Gail>().GetGailType() == GailType.JumpGail)
+						{
+							
+							m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, -lastVel);
+							
 						}
 					}
 				}

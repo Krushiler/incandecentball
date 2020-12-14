@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float distance;
     [SerializeField] float stayTime;
     [SerializeField] Transform groundCheckTransform;
+    [SerializeField] bool moveRight = true;
 
     private bool movingRight = true;
     private float stayTimer = 0;
@@ -21,6 +22,11 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+        movingRight = moveRight;
+        if (!movingRight)
+        {
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
     }
 
     // Update is called once per frame
@@ -48,8 +54,10 @@ public class Enemy : MonoBehaviour
             {
                 rigidbody2D.velocity = new Vector2(-speed, rigidbody2D.velocity.y);
             }
-            RaycastHit2D groundInfo = Physics2D.Raycast(groundCheckTransform.position, Vector2.down, distance);
-            if (groundInfo.collider == false || groundInfo.collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
+            RaycastHit2D groundInfo = Physics2D.Raycast(new Vector2(groundCheckTransform.position.x, groundCheckTransform.position.y), Vector2.down, distance);
+            RaycastHit2D wallInfo = Physics2D.Raycast(new Vector2(groundCheckTransform.position.x, groundCheckTransform.position.y), Vector2.right, 0.1f);
+            if (groundInfo.collider == false || (groundInfo.collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
+                || (wallInfo != false && wallInfo.collider.gameObject.layer == LayerMask.NameToLayer("Ground")))
             {
                 transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
                 movingRight = !movingRight;

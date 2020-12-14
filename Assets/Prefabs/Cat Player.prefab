@@ -521,6 +521,7 @@ MonoBehaviour:
   moneyToEnd: 0
   canvasController: {fileID: 0}
   playerCamera: {fileID: 0}
+  cinemachinePlayerCamera: {fileID: 0}
   m_MovementSmoothing: 0.05
   m_AirControl: 1
   m_WhatIsGroundDef:
@@ -538,6 +539,9 @@ MonoBehaviour:
   MoneyMask:
     serializedVersion: 2
     m_Bits: 1024
+  GailMask:
+    serializedVersion: 2
+    m_Bits: 65536
   m_GroundCheck: {fileID: 1115649538888694699}
   m_CeilingCheck: {fileID: 1115649538315398120}
   m_CeilingCheckLT: {fileID: 1115649537954131485}
