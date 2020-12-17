@@ -476,7 +476,19 @@ public class CharacterController2D : MonoBehaviour
 		{
 			catAnimator.speed = 1;
 		}
-		
+
+		if (m_Rigidbody2D.velocity.x > 0.2f && !m_FacingRight)
+		{
+			// ... flip the player.
+			Flip();
+		}
+		// Otherwise if the input is moving the player left and the player is facing right...
+		else if (m_Rigidbody2D.velocity.x < -0.2f && m_FacingRight)
+		{
+			// ... flip the player.
+			Flip();
+		}
+
 	}
 
 
@@ -688,17 +700,7 @@ public class CharacterController2D : MonoBehaviour
 						}
 					}
 				}
-				if (move > 0 && !m_FacingRight)
-				{
-					// ... flip the player.
-					Flip();
-				}
-				// Otherwise if the input is moving the player left and the player is facing right...
-				else if (move < 0 && m_FacingRight)
-				{
-					// ... flip the player.
-					Flip();
-				}
+				
 				// If the player should jump...
 				if (((m_Grounded || coyoteTimer < CoyoteTime) && jump && !jumped) || ((jumpCounter < jumpsPerJump) && jump))
 				{
@@ -806,7 +808,7 @@ public class CharacterController2D : MonoBehaviour
 						if (colliders[i].gameObject.GetComponent<Gail>().GetGailType() == GailType.JumpGail)
 						{
 							
-							m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, -lastVel);
+							m_Rigidbody2D.velocity = new Vector2(m_Rigidbody2D.velocity.x, -lastVel * 1.05f);
 							
 						}
 					}

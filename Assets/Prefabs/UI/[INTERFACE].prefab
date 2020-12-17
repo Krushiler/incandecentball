@@ -2415,7 +2415,7 @@ MonoBehaviour:
   levelIconBonusGray: {fileID: 7720381491352710815, guid: 4ce4fc0177564f344940fdc5f5b62105,
     type: 3}
   thisCanvas: {fileID: 167305063635170460}
-  numberOfLevels: 6
+  numberOfLevels: 10
   iconSpacing: {x: 250, y: 250}
 --- !u!1 &4159170435689029006
 GameObject:

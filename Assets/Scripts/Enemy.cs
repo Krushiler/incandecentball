@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
                 rigidbody2D.velocity = new Vector2(-speed, rigidbody2D.velocity.y);
             }
             RaycastHit2D groundInfo = Physics2D.Raycast(new Vector2(groundCheckTransform.position.x, groundCheckTransform.position.y), Vector2.down, distance);
-            RaycastHit2D wallInfo = Physics2D.Raycast(new Vector2(groundCheckTransform.position.x, groundCheckTransform.position.y), Vector2.right, 0.1f);
+            RaycastHit2D wallInfo = Physics2D.Raycast(new Vector2(groundCheckTransform.position.x, groundCheckTransform.position.y), Vector2.up, 0.5f);
             if (groundInfo.collider == false || (groundInfo.collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
                 || (wallInfo != false && wallInfo.collider.gameObject.layer == LayerMask.NameToLayer("Ground")))
             {

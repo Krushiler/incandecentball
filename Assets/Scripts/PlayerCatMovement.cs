@@ -27,7 +27,7 @@ public class PlayerCatMovement : MonoBehaviour
     Image stateImage;
 
     void setSitImage()
-    {
+    {   
         crouchButton.gameObject.GetComponent<Image>().sprite = sitImage;
         stateImage.sprite = standCatImage;
     }
