@@ -1,2 +1,3 @@
 # incandecentball
-Game with cat
+Platformer with cat
+VK Group https://vk.com/ccangames
